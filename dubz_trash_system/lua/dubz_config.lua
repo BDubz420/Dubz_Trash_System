@@ -35,14 +35,14 @@ DubzTrashConfig = {
 	},
 
 	Limits = {
-		MaxPlayerTrash = 25,
 		MaxPlayerWeight = 75,
-		MaxCompactorTrash = 25,
+		MaxCompactorWeight = 25,
 	},
 
 	Compactor = {
 		CompactingTime = 30,
 		RequireFullLoad = true,
+		RequiredWeight = 25,
 		PlaySounds = true,
 		StartSound = "buttons/button9.wav",
 		LoopSound = "ambient/machines/engine_idle1.wav",
@@ -102,6 +102,9 @@ DubzTrashConfig = {
 		TrashBin = "models/props_trainstation/trashcan_indoor001b.mdl",
 		Compactor = "models/props_wasteland/laundry_washer003.mdl",
 		Vendor = "models/Humans/Group03/male_03.mdl",
+	},
+	Colors = {
+		Compactor = Color(255, 255, 255),
 	},
 
 	Vendor = {

@@ -3,78 +3,40 @@ AddCSLuaFile("dubz_config.lua")
 local meta = FindMetaTable("Player")
 local config = include("dubz_config.lua")
 
-local maxcompactortrash = config.Limits.MaxCompactorTrash
-local maxplytrash = config.Limits.MaxPlayerTrash
+local maxcompactorweight = config.Limits.MaxCompactorWeight
 local maxplyweight = config.Limits.MaxPlayerWeight
 
 function meta:CollectTrash(ent)
 
-	local trash = ent:GetNWInt("TrashBeingHeld", 0)
-	local plytrash = self:GetNWInt("TrashAmount", 0)
 	local binWeight = ent:GetNWInt("TrashWeightInBin", 0)
 	local plyWeight = self:GetNWInt("TrashWeight", 0)
 
-	if plytrash == maxplytrash then return end
-	if trash > 0 then
+	if plyWeight >= maxplyweight then return end
+	if binWeight > 0 then
 
-		local remainingtrash = maxplytrash -plytrash
-		if remainingtrash == 0 then return end
-		if trash >= remainingtrash then
+		local remainingWeight = maxplyweight - plyWeight
+		local weightToAdd = math.min(binWeight, remainingWeight)
 
-			self:SetNWInt("TrashAmount", self:GetNWInt("TrashAmount") + remainingtrash ) -- add remaining trash to ply
-			ent:SetNWInt("TrashBeingHeld", ent:GetNWInt("TrashBeingHeld") -remainingtrash) -- subtract remaining trash from ent
-			local weightPerItem = binWeight / math.max(trash, 1)
-			local weightToAdd = math.floor(weightPerItem * remainingtrash)
-			if plyWeight + weightToAdd > maxplyweight then
-				weightToAdd = math.max(maxplyweight - plyWeight, 0)
-			end
-			self:SetNWInt("TrashWeight", plyWeight + weightToAdd)
-			ent:SetNWInt("TrashWeightInBin", math.max(binWeight - weightToAdd, 0))
-			self:SendLua([[chat.AddText( Color(255,50,0), "]] .. config.General.ChatPrefix .. [[ ", Color(255,255,255), "You have collected ]] .. remainingtrash .. [[ trash.")]])
-		else
-
-			self:SetNWInt("TrashAmount", self:GetNWInt("TrashAmount") + trash ) -- withdraw all trash 
-			ent:SetNWInt("TrashBeingHeld", 0) -- set ent trash to 0
-			local weightToAdd = binWeight
-			if plyWeight + weightToAdd > maxplyweight then
-				weightToAdd = math.max(maxplyweight - plyWeight, 0)
-			end
-			self:SetNWInt("TrashWeight", plyWeight + weightToAdd)
-			ent:SetNWInt("TrashWeightInBin", math.max(binWeight - weightToAdd, 0))
-			self:SendLua([[chat.AddText( Color(255,50,0), "]] .. config.General.ChatPrefix .. [[ ", Color(255,255,255), "You have collected ]] .. trash .. [[ trash.")]])
-		end
+		self:SetNWInt("TrashWeight", plyWeight + weightToAdd)
+		ent:SetNWInt("TrashWeightInBin", math.max(binWeight - weightToAdd, 0))
+		self:SendLua([[chat.AddText( Color(255,50,0), "]] .. config.General.ChatPrefix .. [[ ", Color(255,255,255), "You have collected ]] .. weightToAdd .. [[kg of trash.")]])
 	end
 end
 
 function meta:DepositTrash(ent)
 
-	local trash = ent:GetNWInt("TrashHeldInCompactor", 0)
-	local plytrash = self:GetNWInt("TrashAmount", 0)
 	local plyWeight = self:GetNWInt("TrashWeight", 0)
+	local compactorWeight = ent:GetNWInt("TrashWeightInCompactor", 0)
 
-	if trash == maxcompactortrash then return end
-	if plytrash > 0 then
+	if compactorWeight >= maxcompactorweight then return end
+	if plyWeight > 0 then
 
-		local remainingtrash = maxcompactortrash -trash
-		if remainingtrash == 0 then return end
-		
-		if plytrash >= remainingtrash then
- 
-			ent:SetNWInt("TrashHeldInCompactor", ent:GetNWInt("TrashHeldInCompactor") + remainingtrash) -- add remaining trash to ent
-			self:SetNWInt("TrashAmount", self:GetNWInt("TrashAmount") - remainingtrash ) -- subtract remaining trash to ply
-			local weightPerItem = plyWeight / math.max(plytrash, 1)
-			local weightToMove = math.floor(weightPerItem * remainingtrash)
-			ent:SetNWInt("TrashWeightInCompactor", ent:GetNWInt("TrashWeightInCompactor") + weightToMove)
-			self:SetNWInt("TrashWeight", math.max(plyWeight - weightToMove, 0))
-			self:SendLua([[chat.AddText( Color(255,50,0), "]] .. config.General.ChatPrefix .. [[ ", Color(255,255,255), "You put ]] .. remainingtrash .. [[ trash into the compactor.")]])
-		else
+		local remainingWeight = maxcompactorweight - compactorWeight
+		local weightToMove = math.min(plyWeight, remainingWeight)
 
-			ent:SetNWInt("TrashHeldInCompactor", ent:GetNWInt("TrashHeldInCompactor") + plytrash ) -- add all ply trash to ent
-			self:SetNWInt("TrashAmount", 0) -- set ply trash to 0
-			ent:SetNWInt("TrashWeightInCompactor", ent:GetNWInt("TrashWeightInCompactor") + plyWeight)
-			self:SetNWInt("TrashWeight", 0)
-			self:SendLua([[chat.AddText( Color(255,50,0), "]] .. config.General.ChatPrefix .. [[ ", Color(255,255,255), "You put ]] .. plytrash .. [[ trash into the compactor.")]])
-		end
+		ent:SetNWInt("TrashWeightInCompactor", compactorWeight + weightToMove)
+		self:SetNWInt("TrashWeight", math.max(plyWeight - weightToMove, 0))
+		self:SendLua([[chat.AddText( Color(255,50,0), "]] .. config.General.ChatPrefix .. [[ ", Color(255,255,255), "You put ]] .. weightToMove .. [[kg into the compactor.")]])
 	end
 end
 

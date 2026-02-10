@@ -6,6 +6,8 @@ end
 
 local config = include("dubz_config.lua")
 
+local config = include("dubz_config.lua")
+
 SWEP.PrintName 		= "Trash Box"
 SWEP.Slot 			= 3
 SWEP.SlotPos 		= 1
@@ -95,17 +97,11 @@ function SWEP:PrimaryAttack()
     if ent:GetPos():Distance( self.Owner:GetPos() ) > 200 then return end
 	local itemWeight = ent:GetNWInt("TrashWeight", 1)
 	local currentWeight = self.Owner:GetNWInt("TrashWeight", 0)
-	if self.Owner:GetNWInt("TrashAmount") == config.Limits.MaxPlayerTrash then 
-    	return
-    end
 	if currentWeight + itemWeight > config.Limits.MaxPlayerWeight then return end
 
 	self.Owner:EmitSound(collection[math.random(1, #collection)])
-    if self.Owner:GetNWInt("TrashAmount") != config.Limits.MaxPlayerTrash then
-    	self.Owner:SetNWInt("TrashAmount", self.Owner:GetNWInt("TrashAmount") +1)
-		self.Owner:SetNWInt("TrashWeight", currentWeight + itemWeight)
-    	ent:Remove()
-	else return end
+	self.Owner:SetNWInt("TrashWeight", currentWeight + itemWeight)
+	ent:Remove()
 end
 
 function SWEP:SecondaryAttack()
@@ -122,12 +118,7 @@ end
 function SWEP:DrawHUD()
 	local trashWeight = self.Owner:GetNWInt("TrashWeight", 0)
 	local maxWeight = config.Limits.MaxPlayerWeight
-    if self.Owner:GetNWInt("TrashAmount") != config.Limits.MaxPlayerTrash then
-		draw.SimpleText("Trash: "..self.Owner:GetNWInt("TrashAmount"), "HUDNumber5", ScrW() /2, ScrH() /1.15, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-	else
-		draw.SimpleText("Trash: Full", "HUDNumber5", ScrW() /2, ScrH() /1.15, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-	end
-	draw.SimpleText("Weight: "..trashWeight.."/"..maxWeight.."kg", "HUDNumber5", ScrW() /2, ScrH() /1.11, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	draw.SimpleText("Trash: "..trashWeight.."/"..maxWeight.."kg", "HUDNumber5", ScrW() /2, ScrH() /1.15, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 end
 
 function SWEP:Holster()

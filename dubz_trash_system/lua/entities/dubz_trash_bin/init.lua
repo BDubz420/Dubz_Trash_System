@@ -14,15 +14,13 @@ function ENT:Initialize()
 	local phys = self:GetPhysicsObject()
     phys:Wake()
 
-    self:SetNWInt("TrashBeingHeld", 0)
     self:SetNWInt("TrashWeightInBin", 0)
 end
 
 function ENT:StartTouch(ent)
 
-	if ent:GetClass() == "dubz_trash" then
+		if ent:GetClass() == "dubz_trash" then
 
-		self:SetNWInt("TrashBeingHeld", self:GetNWInt("TrashBeingHeld") + 1)
 		self:SetNWInt("TrashWeightInBin", self:GetNWInt("TrashWeightInBin") + ent:GetNWInt("TrashWeight", 1))
 		ent:Remove()
 
@@ -36,7 +34,7 @@ function ENT:AcceptInput( input, ply )
 
 		if table.HasValue(config.Teams.Collectors, ply:Team()) then
 
-			if self:GetNWInt("TrashBeingHeld") == 0 then
+			if self:GetNWInt("TrashWeightInBin") == 0 then
 				DarkRP.notify(ply, 0, 4, "Trash can is empty!")
 			else
 
