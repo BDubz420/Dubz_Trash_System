@@ -20,6 +20,7 @@ function ENT:Initialize()
 	self:SetNWInt("TrashHeldInCompactor", 0)
 	self:SetNWInt("TrashWeightInCompactor", 0)
 	self:SetNWBool("Compacting", false)
+	self.BasePos = self:GetPos()
 end
 
 function ENT:SpawnFunction(ply, trace)
@@ -45,6 +46,38 @@ function ENT:StartTouch(ent)
 	end
 end
 
+local function StartCompactorShake(ent)
+	if not config.Compactor.Shake.Enabled then return end
+
+	local interval = config.Compactor.Shake.Interval
+	local offset = config.Compactor.Shake.Offset
+	local basePos = ent.BasePos or ent:GetPos()
+	ent.BasePos = basePos
+
+	timer.Create("DubzTrashShake_" .. ent:EntIndex(), interval, 0, function()
+		if not IsValid(ent) or not ent:GetNWBool("Compacting") then
+			if IsValid(ent) then
+				ent:SetPos(ent.BasePos)
+			end
+			timer.Remove("DubzTrashShake_" .. ent:EntIndex())
+			return
+		end
+		local shakeOffset = Vector(
+			math.Rand(-offset, offset),
+			math.Rand(-offset, offset),
+			math.Rand(-offset * 0.5, offset * 0.5)
+		)
+		ent:SetPos(ent.BasePos + shakeOffset)
+	end)
+end
+
+local function StopCompactorShake(ent)
+	timer.Remove("DubzTrashShake_" .. ent:EntIndex())
+	if IsValid(ent) then
+		ent:SetPos(ent.BasePos or ent:GetPos())
+	end
+end
+
 local delay = 2
 local shouldOccur = true
 function ENT:AcceptInput( input, ply )
@@ -53,6 +86,7 @@ function ENT:AcceptInput( input, ply )
 			local heldTrash = self:GetNWInt("TrashHeldInCompactor")
 			local isFull = heldTrash == config.Limits.MaxCompactorTrash
 			if isFull or (not config.Compactor.RequireFullLoad and heldTrash > 0) then
+				self.BasePos = self:GetPos()
 
 				net.Start("DubzTrashSendTime")
 				net.WriteEntity(self)
@@ -62,8 +96,23 @@ function ENT:AcceptInput( input, ply )
 			    self:SetNWBool("Compacting", true)
 				self.EffectTime = CurTime() + config.Compactor.CompactingTime
 
+				if config.Compactor.PlaySounds then
+					self:EmitSound(config.Compactor.StartSound)
+					if config.Compactor.LoopSound and config.Compactor.LoopSound ~= "" then
+						self.CompactorLoop = CreateSound(self, config.Compactor.LoopSound)
+						self.CompactorLoop:Play()
+					end
+				end
+				StartCompactorShake(self)
+
 				timer.Simple(config.Compactor.CompactingTime, function()
 					if not IsValid(self) then return end
+
+					StopCompactorShake(self)
+					if self.CompactorLoop then
+						self.CompactorLoop:Stop()
+						self.CompactorLoop = nil
+					end
 
 					if config.Compactor.PlaySounds then
 						self:EmitSound(config.Compactor.CompletionSound)
@@ -122,6 +171,11 @@ end
 
 function ENT:OnRemove()
 	if not IsValid(self) then return end
+	StopCompactorShake(self)
+	if self.CompactorLoop then
+		self.CompactorLoop:Stop()
+		self.CompactorLoop = nil
+	end
 end
 
 local function PlayerPickup( ply, ent )

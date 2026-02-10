@@ -18,6 +18,16 @@ function ENT:Initialize()
 
 	self:SetNWInt("HoldingTrashBlocks", 0)
 	self:SetNWInt("HoldingTrashWeight", 0)
+	self.LastVoiceTime = 0
+
+	local idleSequence = self:LookupSequence("idle_subtle")
+	if idleSequence <= 0 then
+		idleSequence = self:LookupSequence("idle_all_01")
+	end
+	if idleSequence > 0 then
+		self:SetSequence(idleSequence)
+		self:SetPlaybackRate(1)
+	end
 end
 
 function ENT:StartTouch(ent)
@@ -29,6 +39,14 @@ function ENT:StartTouch(ent)
 end
 
 function ENT:Use(ply)
+	if config.Vendor.VoiceLines and #config.Vendor.VoiceLines > 0 then
+		local now = CurTime()
+		if now - (self.LastVoiceTime or 0) >= config.Vendor.VoiceCooldown then
+			self:EmitSound(config.Vendor.VoiceLines[math.random(1, #config.Vendor.VoiceLines)])
+			self.LastVoiceTime = now
+		end
+	end
+
 	if self:GetNWInt("HoldingTrashBlocks") > 0 then
 		local blockCount = self:GetNWInt("HoldingTrashBlocks", 0)
 		local weight = self:GetNWInt("HoldingTrashWeight", 0)
@@ -46,4 +64,32 @@ function ENT:Use(ply)
 		self:SetNWInt("HoldingTrashBlocks", 0)
 		self:SetNWInt("HoldingTrashWeight", 0)
 	end
+end
+
+function ENT:Think()
+	local nearestPlayer
+	local nearestDistance = config.Vendor.LookRange
+
+	for _, ply in ipairs(player.GetAll()) do
+		if IsValid(ply) and ply:Alive() then
+			local dist = ply:GetPos():Distance(self:GetPos())
+			if dist < nearestDistance then
+				nearestDistance = dist
+				nearestPlayer = ply
+			end
+		end
+	end
+
+	if IsValid(nearestPlayer) then
+		local targetPos = nearestPlayer:EyePos()
+		self:SetEyeTarget(targetPos)
+
+		local ang = (targetPos - self:EyePos()):Angle()
+		local localAng = self:WorldToLocalAngles(ang)
+		self:SetPoseParameter("head_yaw", math.Clamp(localAng.y, -60, 60))
+		self:SetPoseParameter("head_pitch", math.Clamp(-localAng.p, -40, 40))
+	end
+
+	self:NextThink(CurTime())
+	return true
 end

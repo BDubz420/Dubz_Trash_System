@@ -3,6 +3,10 @@
   Customize values below to suit your server.
 ---------------------------------------------------------------------------]]
 
+if SERVER then
+	AddCSLuaFile()
+end
+
 DubzTrashConfig = DubzTrashConfig or {}
 
 DubzTrashConfig = {
@@ -32,6 +36,7 @@ DubzTrashConfig = {
 
 	Limits = {
 		MaxPlayerTrash = 25,
+		MaxPlayerWeight = 75,
 		MaxCompactorTrash = 25,
 	},
 
@@ -39,7 +44,14 @@ DubzTrashConfig = {
 		CompactingTime = 30,
 		RequireFullLoad = true,
 		PlaySounds = true,
+		StartSound = "buttons/button9.wav",
+		LoopSound = "ambient/machines/engine_idle1.wav",
 		CompletionSound = "buttons/button4.wav",
+		Shake = {
+			Enabled = true,
+			Interval = 0.2,
+			Offset = 1.5,
+		},
 	},
 
 	Models = {
@@ -96,6 +108,13 @@ DubzTrashConfig = {
 		Name = "Trash Vendor",
 		Tagline = "Sell your trash here!",
 		SellHint = "Press 'e' to sell your product!",
+		VoiceLines = {
+			"vo/npc/male01/yeah02.wav",
+			"vo/npc/male01/fantastic01.wav",
+			"vo/npc/male01/answer17.wav",
+		},
+		VoiceCooldown = 6,
+		LookRange = 500,
 	},
 
 	Sounds = {
@@ -124,6 +143,18 @@ DubzTrashConfig = {
 		Collectors = {
 			TEAM_TRASH,
 		},
+	},
+
+	Spawns = {
+		Enabled = true,
+		MaxTrashPerPlayer = 8,
+		MaxTrashGlobal = 64,
+		Interval = 6,
+		Attempts = 12,
+		MinDistance = 200,
+		MaxDistance = 600,
+		CleanupDistance = 900,
+		BlindSpotDot = -0.1,
 	},
 }
 

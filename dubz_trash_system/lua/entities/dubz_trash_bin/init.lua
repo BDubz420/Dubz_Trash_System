@@ -15,6 +15,7 @@ function ENT:Initialize()
     phys:Wake()
 
     self:SetNWInt("TrashBeingHeld", 0)
+    self:SetNWInt("TrashWeightInBin", 0)
 end
 
 function ENT:StartTouch(ent)
@@ -22,6 +23,7 @@ function ENT:StartTouch(ent)
 	if ent:GetClass() == "dubz_trash" then
 
 		self:SetNWInt("TrashBeingHeld", self:GetNWInt("TrashBeingHeld") + 1)
+		self:SetNWInt("TrashWeightInBin", self:GetNWInt("TrashWeightInBin") + ent:GetNWInt("TrashWeight", 1))
 		ent:Remove()
 
 		ent:EmitSound(config.Sounds.TrashBin[math.random(1, #config.Sounds.TrashBin)])
