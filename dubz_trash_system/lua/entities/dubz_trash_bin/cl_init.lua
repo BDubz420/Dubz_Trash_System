@@ -30,7 +30,7 @@ function ENT:Draw()
     textAng:RotateAroundAxis(textAng:Forward(), 90)
 	
  	cam.Start3D2D(pos - ang:Right() * 11.5 , textAng, 0.17)
-		draw.SimpleText("Trash: "..self:GetNWInt("TrashBeingHeld",0), "Font", 0, -120, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText("Trash: "..self:GetNWInt("TrashWeightInBin",0).."kg", "Font", 0, -120, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		draw.SimpleText("Press 'e' to collect the trash.", "Font2", 0, -100, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
  	cam.End3D2D()
 end

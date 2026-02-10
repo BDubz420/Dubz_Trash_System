@@ -1,17 +1,28 @@
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
-include("dubz_config.lua")
+local config = include("dubz_config.lua")
+
+local function ApplyBlockWeight(ent, weight)
+	ent:SetNWInt("TrashWeight", weight)
+
+	local phys = ent:GetPhysicsObject()
+	if IsValid(phys) then
+		phys:SetMass(config.Physics.BlockMassBase + (weight * config.Physics.BlockMassPerKg))
+		phys:Wake()
+	end
+end
 
 function ENT:Initialize()
-	self:SetModel("models/hunter/blocks/cube05x05x05.mdl")
-	self:SetMaterial("models/props/CS_militia/rocks01")
+	self:SetModel(config.Models.TrashBlock.Model)
+	self:SetMaterial(config.Models.TrashBlock.Material)
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetUseType(SIMPLE_USE)
-	local phys = self:GetPhysicsObject()
-    phys:Wake()
+	ApplyBlockWeight(self, 0)
+end
 
-    self:SetNWInt("TrashWeight", 0)
+function ENT:SetTrashWeight(weight)
+	ApplyBlockWeight(self, weight)
 end
