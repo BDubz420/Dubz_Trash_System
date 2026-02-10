@@ -124,7 +124,7 @@ function ENT:AcceptInput( input, ply )
 					trashblock:SetPos(self:GetPos() + Vector(0, 0, 50))
 					trashblock:Spawn()
 
-					local blockWeight = math.min(self:GetNWInt("TrashWeightInCompactor", 0), config.Compactor.RequiredWeight)
+					local blockWeight = self:GetNWInt("TrashWeightInCompactor", 0)
 					if config.Weights.UseItemWeightsForBlocks then
 						if config.Weights.Block.ClampToRange then
 							blockWeight = math.Clamp(blockWeight, config.Weights.Block.Min, config.Weights.Block.Max)
