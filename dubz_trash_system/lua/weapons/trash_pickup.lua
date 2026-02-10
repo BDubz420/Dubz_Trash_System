@@ -6,6 +6,12 @@ end
 
 local config = include("dubz_config.lua")
 
+local config = include("dubz_config.lua")
+
+local config = include("dubz_config.lua")
+
+local config = include("dubz_config.lua")
+
 SWEP.PrintName 		= "Trash Box"
 SWEP.Slot 			= 3
 SWEP.SlotPos 		= 1
