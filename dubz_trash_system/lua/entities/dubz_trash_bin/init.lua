@@ -2,10 +2,10 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 
 include("shared.lua")
-include("dubz_config.lua")
+local config = include("dubz_config.lua")
 
 function ENT:Initialize()
-	self:SetModel("models/props_trainstation/trashcan_indoor001b.mdl")
+	self:SetModel(config.Models.TrashBin)
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
@@ -15,6 +15,7 @@ function ENT:Initialize()
     phys:Wake()
 
     self:SetNWInt("TrashBeingHeld", 0)
+    self:SetNWInt("TrashWeightInBin", 0)
 end
 
 function ENT:StartTouch(ent)
@@ -22,12 +23,10 @@ function ENT:StartTouch(ent)
 	if ent:GetClass() == "dubz_trash" then
 
 		self:SetNWInt("TrashBeingHeld", self:GetNWInt("TrashBeingHeld") + 1)
+		self:SetNWInt("TrashWeightInBin", self:GetNWInt("TrashWeightInBin") + ent:GetNWInt("TrashWeight", 1))
 		ent:Remove()
 
-		for _, trashsounds in pairs( trashsounds ) do
-
-			ent:EmitSound( trashsounds[math.random( 1, #trashsounds )] )
-	    end
+		ent:EmitSound(config.Sounds.TrashBin[math.random(1, #config.Sounds.TrashBin)])
 	end
 end
 
@@ -35,7 +34,7 @@ function ENT:AcceptInput( input, ply )
 
 	if input == "Use" and ply:IsPlayer() then
 
-		if table.HasValue({TEAM_TRASH}, ply:Team()) then
+		if table.HasValue(config.Teams.Collectors, ply:Team()) then
 
 			if self:GetNWInt("TrashBeingHeld") == 0 then
 				DarkRP.notify(ply, 0, 4, "Trash can is empty!")

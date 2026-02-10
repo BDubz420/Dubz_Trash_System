@@ -4,6 +4,8 @@ if(SERVER) then
 	util.AddNetworkString("Trash")
 end
 
+local config = include("dubz_config.lua")
+
 SWEP.PrintName 		= "Trash Box"
 SWEP.Slot 			= 3
 SWEP.SlotPos 		= 1
@@ -50,13 +52,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
-local collection = {
-	{
-		"physics/cardboard/cardboard_box_impact_hard1.wav",
-		"physics/cardboard/cardboard_box_impact_hard6.wav",
-		"physics/cardboard/cardboard_box_impact_hard5.wav",
-	}
-}
+local collection = config.Sounds.TrashPickup
 
 function SWEP:Initialize()
     self:SetHoldType( "duel" )
@@ -97,15 +93,17 @@ function SWEP:PrimaryAttack()
     if not IsValid( ent ) then return end
     if ent:GetClass() != "dubz_trash" then return end
     if ent:GetPos():Distance( self.Owner:GetPos() ) > 200 then return end
-    if self.Owner:GetNWInt("TrashAmount") == 25 then 
+	local itemWeight = ent:GetNWInt("TrashWeight", 1)
+	local currentWeight = self.Owner:GetNWInt("TrashWeight", 0)
+	if self.Owner:GetNWInt("TrashAmount") == config.Limits.MaxPlayerTrash then 
     	return
-    else
-	    for _, collection in pairs( collection ) do
-			self.Owner:EmitSound( collection[math.random( 1, #collection )] )
-	    end
-	end
-    if self.Owner:GetNWInt("TrashAmount") != 25 then
+    end
+	if currentWeight + itemWeight > config.Limits.MaxPlayerWeight then return end
+
+	self.Owner:EmitSound(collection[math.random(1, #collection)])
+    if self.Owner:GetNWInt("TrashAmount") != config.Limits.MaxPlayerTrash then
     	self.Owner:SetNWInt("TrashAmount", self.Owner:GetNWInt("TrashAmount") +1)
+		self.Owner:SetNWInt("TrashWeight", currentWeight + itemWeight)
     	ent:Remove()
 	else return end
 end
@@ -122,11 +120,14 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:DrawHUD()
-    if self.Owner:GetNWInt("TrashAmount") != 25 then
+	local trashWeight = self.Owner:GetNWInt("TrashWeight", 0)
+	local maxWeight = config.Limits.MaxPlayerWeight
+    if self.Owner:GetNWInt("TrashAmount") != config.Limits.MaxPlayerTrash then
 		draw.SimpleText("Trash: "..self.Owner:GetNWInt("TrashAmount"), "HUDNumber5", ScrW() /2, ScrH() /1.15, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	else
 		draw.SimpleText("Trash: Full", "HUDNumber5", ScrW() /2, ScrH() /1.15, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
+	draw.SimpleText("Weight: "..trashWeight.."/"..maxWeight.."kg", "HUDNumber5", ScrW() /2, ScrH() /1.11, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 end
 
 function SWEP:Holster()
