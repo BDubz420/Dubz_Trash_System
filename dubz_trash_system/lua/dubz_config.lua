@@ -1,69 +1,130 @@
 --[[-------------------------------------------------------------------------
- 				  Dubz Trash System Config File
- 				Only for use in Vintage Roleplay ;)
----------------------------------------------------------------------------]]	
-priceperkg = 10							--This is the pice per kg of trash
+  Dubz Trash System Configuration
+  Customize values below to suit your server.
+---------------------------------------------------------------------------]]
 
-minweight = 1							--This is the min weight (kg) of the trash blocks
-maxweight = 10							--This is the max weight (kg) of the trash blocks
+DubzTrashConfig = DubzTrashConfig or {}
 
-maxplytrash = 25 						--This is the max amount of trash a player can hold
+DubzTrashConfig = {
+	General = {
+		ChatPrefix = "[DTS]",
+	},
 
-vendorname = "Trash Vendor"				--The Name of the vendor npc
-vendortext = "Sell your trash here!"	--The text line under the npc
+	Economy = {
+		PricePerKg = 10,
+		BlockBonus = 0,
+		MinimumPayout = 0,
+		RoundTo = 1,
+	},
 
-compactingtime = 30						--Time to compact one block of trash
-maxcompactortrash = 25					--Time to compact one block of trash
+	Weights = {
+		TrashItem = {
+			Min = 1,
+			Max = 3,
+		},
+		Block = {
+			Min = 10,
+			Max = 50,
+			ClampToRange = true,
+		},
+		UseItemWeightsForBlocks = true,
+	},
 
-compactorsound = true					--The machine sounds played while compacting trash
+	Limits = {
+		MaxPlayerTrash = 25,
+		MaxCompactorTrash = 25,
+	},
 
-trashmodels = {							-- This is a list of models for the trash
-	"models/props_junk/garbage_milkcarton001a.mdl",
-	"models/props_junk/garbage_bag001a.mdl",
-	"models/props_junk/garbage_metalcan001a.mdl",
-	"models/props_junk/Shoe001a.mdl",
-	"models/props_vehicles/carparts_muffler01a.mdl",
-	"models/props_vehicles/carparts_axel01a.mdl",
-	"models/props_vehicles/carparts_door01a.mdl",
-	"models/props_interiors/Furniture_chair03a.mdl",
-	"models/props_junk/garbage_milkcarton002a.mdl",
-	"models/props_junk/garbage_metalcan002a.mdl",
-	"models/props_junk/garbage_carboard002a.mdl",
-	"models/props_junk/TrafficCone001a.mdl",
-	"models/props_lab/harddrive01.mdl",
-	"models/props_junk/plasticbucket001a.mdl",
-	"models/props_junk/MetalBucket01a.mdl",
-	"models/props_junk/metal_paintcan001b.mdl",
-	"models/props_interiors/pot02a.mdl",
-	"models/props_combine/breenglobe.mdl",
-	"models/props_junk/PropaneCanister001a.mdl",
-	"models/props_lab/lockerdoorleft.mdl",
-	"models/props_junk/meathook001a.mdl",
-	"models/props_c17/lampShade001a.mdl",
-	"models/props_c17/playground_swingset_seat01a.mdl",
-	"models/props_c17/doll01.mdl",
-	"models/props_c17/chair_office01a.mdl",
-	"models/props_canal/mattpipe.mdl",
-	"models/props_combine/breenclock.mdl",
-	"models/props_lab/hevplate.mdl",
-	"models/props_lab/reciever01c.mdl",
-	"models/props_trainstation/payphone_reciever001a.mdl",
-	"models/props_junk/garbage_newspaper001a.mdl",
-	"models/props_junk/garbage_plasticbottle001a.mdl",
-	"models/props_junk/garbage_plasticbottle003a.mdl",
-	"models/props_junk/garbage_plasticbottle002a.mdl",
-	"models/props_junk/sawblade001a.mdl",
-	"models/props_interiors/pot01a.mdl",
-	"models/props_junk/CinderBlock01a.mdl",
-	"models/props_c17/tools_wrench01a.mdl"
+	Compactor = {
+		CompactingTime = 30,
+		RequireFullLoad = true,
+		PlaySounds = true,
+		CompletionSound = "buttons/button4.wav",
+	},
+
+	Models = {
+		Trash = {
+			"models/props_junk/garbage_milkcarton001a.mdl",
+			"models/props_junk/garbage_bag001a.mdl",
+			"models/props_junk/garbage_metalcan001a.mdl",
+			"models/props_junk/Shoe001a.mdl",
+			"models/props_vehicles/carparts_muffler01a.mdl",
+			"models/props_vehicles/carparts_axel01a.mdl",
+			"models/props_vehicles/carparts_door01a.mdl",
+			"models/props_interiors/Furniture_chair03a.mdl",
+			"models/props_junk/garbage_milkcarton002a.mdl",
+			"models/props_junk/garbage_metalcan002a.mdl",
+			"models/props_junk/garbage_carboard002a.mdl",
+			"models/props_junk/TrafficCone001a.mdl",
+			"models/props_lab/harddrive01.mdl",
+			"models/props_junk/plasticbucket001a.mdl",
+			"models/props_junk/MetalBucket01a.mdl",
+			"models/props_junk/metal_paintcan001b.mdl",
+			"models/props_interiors/pot02a.mdl",
+			"models/props_combine/breenglobe.mdl",
+			"models/props_junk/PropaneCanister001a.mdl",
+			"models/props_lab/lockerdoorleft.mdl",
+			"models/props_junk/meathook001a.mdl",
+			"models/props_c17/lampShade001a.mdl",
+			"models/props_c17/playground_swingset_seat01a.mdl",
+			"models/props_c17/doll01.mdl",
+			"models/props_c17/chair_office01a.mdl",
+			"models/props_canal/mattpipe.mdl",
+			"models/props_combine/breenclock.mdl",
+			"models/props_lab/hevplate.mdl",
+			"models/props_lab/reciever01c.mdl",
+			"models/props_trainstation/payphone_reciever001a.mdl",
+			"models/props_junk/garbage_newspaper001a.mdl",
+			"models/props_junk/garbage_plasticbottle001a.mdl",
+			"models/props_junk/garbage_plasticbottle003a.mdl",
+			"models/props_junk/garbage_plasticbottle002a.mdl",
+			"models/props_junk/sawblade001a.mdl",
+			"models/props_interiors/pot01a.mdl",
+			"models/props_junk/CinderBlock01a.mdl",
+			"models/props_c17/tools_wrench01a.mdl",
+		},
+		TrashBlock = {
+			Model = "models/hunter/blocks/cube05x05x05.mdl",
+			Material = "models/props/CS_militia/rocks01",
+		},
+		TrashBin = "models/props_trainstation/trashcan_indoor001b.mdl",
+		Compactor = "models/props_wasteland/laundry_washer003.mdl",
+		Vendor = "models/Humans/Group03/male_03.mdl",
+	},
+
+	Vendor = {
+		Name = "Trash Vendor",
+		Tagline = "Sell your trash here!",
+		SellHint = "Press 'e' to sell your product!",
+	},
+
+	Sounds = {
+		TrashBin = {
+			"physics/plastic/plastic_barrel_break1.wav",
+			"physics/plastic/plastic_barrel_break2.wav",
+			"Computer.ImpactSoft",
+			"physics/metal/metal_grenade_impact_soft1.wav",
+			"physics/wood/wood_box_impact_bullet1.wav",
+		},
+		TrashPickup = {
+			"physics/cardboard/cardboard_box_impact_hard1.wav",
+			"physics/cardboard/cardboard_box_impact_hard6.wav",
+			"physics/cardboard/cardboard_box_impact_hard5.wav",
+		},
+	},
+
+	Physics = {
+		TrashMassBase = 1,
+		TrashMassPerKg = 0.5,
+		BlockMassBase = 5,
+		BlockMassPerKg = 1.5,
+	},
+
+	Teams = {
+		Collectors = {
+			TEAM_TRASH,
+		},
+	},
 }
 
-trashsounds = { 							-- This is a list of sounds for the trash bin
-	{
-		"physics/plastic/plastic_barrel_break1.wav",
-		"physics/plastic/plastic_barrel_break2.wav",
-		"Computer.ImpactSoft",
-		"physics/metal/metal_grenade_impact_soft1.wav",
-		"physics/wood/wood_box_impact_bullet1.wav",
-	}
-}
+return DubzTrashConfig

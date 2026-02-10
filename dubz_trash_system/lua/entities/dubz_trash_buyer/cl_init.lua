@@ -1,4 +1,5 @@
 include("shared.lua")
+local config = include("dubz_config.lua")
 
 local ypos = -150
 
@@ -23,14 +24,14 @@ function ENT:Draw()
 	ang:RotateAroundAxis(ang:Right(), 90)
 
 	cam.Start3D2D(pos, ang, 0.11)
-		draw.WordBox(6, 0, ypos +32, "Trash Vendor", "Trebuchet24", Color(140, 0, 0, 100), Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.WordBox(6, 0, ypos +32, config.Vendor.Name, "Trebuchet24", Color(140, 0, 0, 100), Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	cam.End3D2D()
 
 	cam.Start3D2D(pos, ang, 0.05)
-		draw.WordBox(8, 0, ypos -35, "Sell your trash here!", "Trebuchet24", Color(140, 0, 0, 100), Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.WordBox(8, 0, ypos -35, config.Vendor.Tagline, "Trebuchet24", Color(140, 0, 0, 100), Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
 		if self:GetNWInt("HoldingTrashBlocks") > 0 then
-			draw.WordBox(8, 0, ypos +15, "Press 'e' to sell your product!", "Trebuchet24", Color(140, 0, 0, 100), Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.WordBox(8, 0, ypos +15, config.Vendor.SellHint, "Trebuchet24", Color(140, 0, 0, 100), Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end	
 	cam.End3D2D()
 end
