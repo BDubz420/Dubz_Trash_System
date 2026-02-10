@@ -36,13 +36,13 @@ DubzTrashConfig = {
 
 	Limits = {
 		MaxPlayerWeight = 75,
-		MaxCompactorWeight = 25,
+		MaxCompactorWeight = 30,
 	},
 
 	Compactor = {
 		CompactingTime = 30,
 		RequireFullLoad = true,
-		RequiredWeight = 25,
+		RequiredWeight = 10,
 		PlaySounds = true,
 		StartSound = "buttons/button9.wav",
 		LoopSound = "ambient/machines/engine_idle1.wav",

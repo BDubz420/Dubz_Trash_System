@@ -1,7 +1,8 @@
 include("shared.lua")
 local config = include("dubz_config.lua")
 
-local maxcompactorweight = config.Compactor.RequiredWeight
+local maxcompactorweight = config.Limits.MaxCompactorWeight
+local requiredWeight = config.Compactor.RequiredWeight
 local compactTime = math.max(config.Compactor.CompactingTime, 1)
 local ypos = 150
 local x = 100
@@ -41,6 +42,7 @@ function ENT:Draw()
  		draw.RoundedBox(0,-160,0,283,5,Color(255, 50, 0))
 		draw.SimpleText("Trash Compactor","Font",-20,10,Color(255, 50, 0),TEXT_ALIGN_CENTER)
 		draw.SimpleText("Max: " .. maxcompactorweight .. "kg","Font",-20,35,Color(255, 255, 255),TEXT_ALIGN_CENTER)
+		draw.SimpleText("Start: " .. requiredWeight .. "kg","Font",-20,50,Color(255, 255, 255),TEXT_ALIGN_CENTER)
 
 		local heldWeight = self:GetNWInt("TrashWeightInCompactor", 0)
 		if self:GetNWBool("Compacting") == true then
@@ -54,7 +56,6 @@ function ENT:Draw()
 		end
 
 		if self:GetNWBool("Compacting") == false then
-			local requiredWeight = config.Compactor.RequiredWeight
 			if config.Compactor.RequireFullLoad and heldWeight < requiredWeight then
 				local remaining = requiredWeight - heldWeight
 				draw.SimpleText("Add "..remaining.."kg to start.", "Font", -20, 85, Color(255, 255, 255), TEXT_ALIGN_CENTER)
